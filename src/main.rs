@@ -19,7 +19,7 @@ lazy_static! {
 #[derive(Default, NwgUi)]
 pub struct BasicApp {
     #[nwg_control(size: (300, 150), position: (300, 300), title: "点名器", flags: "WINDOW|VISIBLE")]
-    #[nwg_events( OnInit: [BasicApp::file_load], OnWindowClose: [BasicApp::say_goodbye] )]
+    #[nwg_events( OnInit: [BasicApp::file_load], OnWindowClose: [BasicApp::close] )]
     window: nwg::Window,
 
     #[nwg_layout(parent: window, spacing: 1)]
@@ -41,21 +41,19 @@ pub struct BasicApp {
 
     #[nwg_control(text: "点名")]
     #[nwg_layout_item(layout: grid, col: 0, row: 3, row_span: 2)]
-    #[nwg_events( OnButtonClick: [BasicApp::say_hello] )]
+    #[nwg_events( OnButtonClick: [BasicApp::name_pick] )]
     hello_button: nwg::Button
 }
 
 impl BasicApp {
 
-    fn say_hello(&self) {
+    fn name_pick(&self) {
         let mut rng = rand::thread_rng();
         let mut name_num = Uniform::from(0..NAME.lock().unwrap().len()).sample(&mut rng);
         self.name.set_text(&format!("{}",NAME.lock().unwrap().to_vec()[name_num]));
-        //nwg::modal_info_message(&self.window, "Hello", &format!("Hello {}", self.name.text()));
     }
 
-    fn say_goodbye(&self) {
-        //nwg::modal_info_message(&self.window, "Goodbye", &format!("Goodbye {}", self.name_edit.text()));
+    fn close(&self) {
         nwg::stop_thread_dispatch();
     }
 
